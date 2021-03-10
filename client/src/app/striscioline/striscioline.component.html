@@ -1,7 +1,41 @@
-<form class="striscioline-form">
+<form
+  class="striscioline-form"
+  [formGroup]="strisciolineForm"
+  (ngSubmit)="onSubmit()"
+>
   <mat-form-field class="striscioline-full-width">
     <mat-label>Who's him?</mat-label>
-    <input matInput #message maxlength="256" />
-    <mat-hint align="end">{{ message.value.length }} / 256</mat-hint>
+    <input
+      formControlName="hisName"
+      matInput
+      [formControl]="strisciolineForm.controls['hisName']"
+      maxlength="144"
+      required
+    />
+    <mat-hint align="end"
+      >{{ strisciolineForm.controls["hisName"].value.length }} / 144</mat-hint
+    >
   </mat-form-field>
+  <mat-form-field class="striscioline-full-width">
+    <mat-label>Who's her?</mat-label>
+    <input
+      formControlName="herName"
+      matInput
+      [formControl]="strisciolineForm.controls['herName']"
+      maxlength="144"
+      required
+    />
+    <mat-hint align="end"
+      >{{ strisciolineForm.controls["herName"].value.length }} / 144</mat-hint
+    >
+  </mat-form-field>
+
+  <button
+    type="submit"
+    [disabled]="!strisciolineForm.valid"
+    mat-raised-button
+    color="primary"
+  >
+    Submit
+  </button>
 </form>
