@@ -1,1 +1,7 @@
-<p>striscioline works!</p>
+<form class="striscioline-form">
+  <mat-form-field class="striscioline-full-width">
+    <mat-label>Who's him?</mat-label>
+    <input matInput #message maxlength="256" />
+    <mat-hint align="end">{{ message.value.length }} / 256</mat-hint>
+  </mat-form-field>
+</form>
