@@ -1,10 +1,10 @@
 <div mat-dialog-content>
   <mat-list role="list">
-    <mat-list-item
-      *ngFor="let qa of data"
-      role="listitem"
-    >
+    <mat-list-item *ngFor="let qa of data" role="listitem">
       {{ qa[0] }} : {{ qa[1] }}
     </mat-list-item>
   </mat-list>
 </div>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Play again</button>
+</mat-dialog-actions>

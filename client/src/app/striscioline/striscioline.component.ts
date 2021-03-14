@@ -46,6 +46,7 @@ export class StrisciolineComponent implements OnInit {
     const dialogRef = this.dialog.open(StrisciolineResultComponent, {
       data: qa
     });
+    dialogRef.disableClose = true;
 
     dialogRef.afterClosed().subscribe(result => {
       console.log(`Dialog result: ${result}`);
