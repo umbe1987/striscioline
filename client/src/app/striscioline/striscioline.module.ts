@@ -6,9 +6,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { StrisciolineResultComponent } from './striscioline-result/striscioline-result.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatListModule } from '@angular/material/list';
 
 @NgModule({
-  declarations: [StrisciolineComponent],
+  declarations: [StrisciolineComponent, StrisciolineResultComponent],
   imports: [
     CommonModule,
     MatFormFieldModule,
@@ -16,6 +19,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatButtonModule,
     FormsModule,
     ReactiveFormsModule,
+    MatDialogModule,
+    MatListModule,
   ],
   providers: [StrisciolineService],
   exports: [
@@ -23,6 +28,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatDialogModule,
+    MatListModule,
   ],
 })
 export class StrisciolineModule {}

@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormArray } from '@angular/forms';
 import { Validators } from '@angular/forms';
 import { StrisciolineService } from './striscioline.service';
+import { StrisciolineResultComponent } from './striscioline-result/striscioline-result.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-striscioline',
@@ -11,7 +13,7 @@ import { StrisciolineService } from './striscioline.service';
 export class StrisciolineComponent implements OnInit {
   questions: string[] = [];
   strisciolineForm = this.fb.group({
-    questionsFArr: this.fb.array([])
+    questionsFArr: this.fb.array([]),
   });
 
   get questionsFArr(): FormArray {
@@ -20,7 +22,8 @@ export class StrisciolineComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private strisciolineService: StrisciolineService
+    private strisciolineService: StrisciolineService,
+    private dialog: MatDialog
   ) {
     this.strisciolineService.getQuestions().subscribe((questions) => {
       questions.forEach((q) => {
@@ -37,7 +40,15 @@ export class StrisciolineComponent implements OnInit {
   }
 
   onSubmit(): void {
-    // Process checkout data here
-    console.log(this.questionsFArr.value);
+    // combine two arrays like Ptyhon zip function (https://stackoverflow.com/a/22015771/1979665)
+    const qa = this.questions.map((e, i) => [e, this.questionsFArr.value[i]]);
+    console.log(qa);
+    const dialogRef = this.dialog.open(StrisciolineResultComponent, {
+      data: qa
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+    });
   }
 }

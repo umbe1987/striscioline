@@ -1,0 +1,10 @@
+<div mat-dialog-content>
+  <mat-list role="list">
+    <mat-list-item
+      *ngFor="let qa of data"
+      role="listitem"
+    >
+      {{ qa[0] }} : {{ qa[1] }}
+    </mat-list-item>
+  </mat-list>
+</div>
