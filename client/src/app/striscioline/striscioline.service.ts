@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Striscioline } from './striscioline';
 
 @Injectable({
   providedIn: 'root',
@@ -9,7 +8,7 @@ import { Striscioline } from './striscioline';
 export class StrisciolineService {
   constructor(private http: HttpClient) {}
 
-  getQuestions(): Observable<Striscioline[]> {
-    return this.http.get<Striscioline[]>('./assets/questions.json');
+  getQuestions(): Observable<string[]> {
+    return this.http.get<string[]>('./assets/questions.json');
   }
 }

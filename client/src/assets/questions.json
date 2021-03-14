@@ -1,10 +1,1 @@
-[
-  {
-    "name": "his-name",
-    "desc": "What's his name?"
-  },
-  {
-    "name": "her-name",
-    "desc": "What's her name?"
-  }
-]
+["What's his name?", "What's her name?"]
