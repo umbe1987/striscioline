@@ -4,14 +4,15 @@ import cors from "cors";
 import { Server } from "colyseus";
 import { monitor } from "@colyseus/monitor";
 // import socialRoutes from "@colyseus/social/express"
+import path from 'path';
 
-import { MyRoom } from "./rooms/MyRoom";
+import { StrisciolineRoom } from "./rooms/StrisciolineRoom";
 
-const port = Number(process.env.PORT || 2567);
-const app = express()
+const port = Number(process.env.PORT || 2568);
+const app = express();
 
 app.use(cors());
-app.use(express.json())
+app.use(express.json());
 
 const server = http.createServer(app);
 const gameServer = new Server({
@@ -19,8 +20,10 @@ const gameServer = new Server({
 });
 
 // register your room handlers
-gameServer.define('my_room', MyRoom);
+gameServer.define("striscioline", StrisciolineRoom);
 
+console.log(path.join(__dirname, "../../client/dist"));
+app.use('/', express.static(path.join(__dirname, "../../client/dist/client")));
 /**
  * Register @colyseus/social routes
  *
@@ -33,4 +36,4 @@ gameServer.define('my_room', MyRoom);
 app.use("/colyseus", monitor());
 
 gameServer.listen(port);
-console.log(`Listening on ws://localhost:${ port }`)
+console.log(`Listening on http://localhost:${port}`);
