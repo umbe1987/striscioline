@@ -2,7 +2,7 @@ import { Schema, type, MapSchema } from "@colyseus/schema";
 
 export class Player extends Schema {
   @type("boolean")
-  done: boolean = false;
+  done = false;
 }
 
 export class State extends Schema {
@@ -17,8 +17,8 @@ export class State extends Schema {
   }
 
   submitPlayer(sessionId: string, status: any) {
-    if (status.done) {
-      this.players.get(sessionId).done = true;
+    if (typeof status.done === "boolean") {
+      this.players.get(sessionId).done = status.done;
     }
   }
 }

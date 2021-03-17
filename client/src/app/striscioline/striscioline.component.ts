@@ -49,7 +49,7 @@ export class StrisciolineComponent implements AfterViewInit {
         this.room = roomInstance;
         console.log(this.room.sessionId, 'joined', this.room.name);
 
-        const players: any = {};
+        const players: object = {};
         this.room.state.players.onAdd = (player: any, sessionId: any) => {
           player.onChange = (changes: DataChange[]) => {
             changes.forEach((change: any) => {
@@ -59,7 +59,9 @@ export class StrisciolineComponent implements AfterViewInit {
             });
           };
           players[sessionId] = player;
-          console.log(players);
+          Object.entries(players).forEach(([key, val]) => {
+            console.log(key, val.done);
+          });
         };
 
         this.room.state.players.onChange = (player: any, sessionId: any) => {
@@ -85,7 +87,7 @@ export class StrisciolineComponent implements AfterViewInit {
   }
 
   onSubmit(): void {
-    this.room.send('submit');
+    this.room.send('submit', { done: true });
     // combine two arrays like Python zip function (https://stackoverflow.com/a/22015771/1979665)
     const qa = this.questions.map((e, i) => [e, this.questionsFArr.value[i]]);
     console.log(qa);

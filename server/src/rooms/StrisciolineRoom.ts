@@ -18,6 +18,15 @@ export class StrisciolineRoom extends Room<State> {
       this.state.submitPlayer(client.sessionId, data);
       client.send("Questions submitted. Waiting for other clients to finish.");
     });
+
+    this.onMessage("*", (client, type, message) => {
+      console.log(
+        "StrisciolineRoom received message from",
+        client.sessionId,
+        ":",
+        message
+      );
+    });
   }
 
   onJoin(client: Client, options: any) {
