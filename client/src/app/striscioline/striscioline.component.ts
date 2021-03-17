@@ -76,6 +76,11 @@ export class StrisciolineComponent implements AfterViewInit {
           console.log(`${player} has been removed at ${sessionId}`);
           delete players[sessionId];
         };
+
+        // server message handling
+        this.room.onMessage('join', (message) => {
+          console.log(`${this.room.name} says: "${message}"`);
+        });
       })
       .catch((e) => {
         console.log('JOIN ERROR', e);

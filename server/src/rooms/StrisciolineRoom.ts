@@ -30,7 +30,7 @@ export class StrisciolineRoom extends Room<State> {
   }
 
   onJoin(client: Client, options: any) {
-    client.send(`Hello ${client.sessionId}`);
+    client.send("join", `Hello ${client.sessionId}`);
     this.state.createPlayer(client.sessionId);
   }
 
