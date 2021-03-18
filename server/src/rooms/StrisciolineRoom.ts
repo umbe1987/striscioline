@@ -11,6 +11,10 @@ export class StrisciolineRoom extends Room<State> {
     this.onMessage("submit", (client, data) => {
       console.log("StrisciolineRoom received data from", client.sessionId);
       this.state.submitStory(client.sessionId, data);
+      const hasEveryoneFinished = [ ...this.state.players.values()].map(x => x.done);
+      if (hasEveryoneFinished.every(x => x)) {
+        console.log('game finished!');
+      }
     });
 
     this.onMessage("*", (client, type, message) => {
