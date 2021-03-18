@@ -4,7 +4,9 @@ import { Validators } from '@angular/forms';
 import { StrisciolineService } from './striscioline.service';
 import { StrisciolineResultComponent } from './striscioline-result/striscioline-result.component';
 import { MatDialog } from '@angular/material/dialog';
-import { Client, Room, DataChange } from 'colyseus.js';
+import * as Colyseus from 'colyseus.js';
+import { SnackbarService } from '../snackbar.service';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-striscioline',
@@ -12,7 +14,9 @@ import { Client, Room, DataChange } from 'colyseus.js';
   styleUrls: ['./striscioline.component.css'],
 })
 export class StrisciolineComponent implements AfterViewInit {
-  private room: Room;
+  private answering: boolean[] = [];
+  private $answering = new Subject<boolean>();
+  private room: Colyseus.Room;
   questions: string[] = [];
   strisciolineForm = this.fb.group({
     questionsFArr: this.fb.array([]),
@@ -25,7 +29,8 @@ export class StrisciolineComponent implements AfterViewInit {
   constructor(
     private fb: FormBuilder,
     private strisciolineService: StrisciolineService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private snackbar: SnackbarService
   ) {
     this.strisciolineService.getQuestions().subscribe((questions) => {
       questions.forEach((q) => {
@@ -37,7 +42,7 @@ export class StrisciolineComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     const host = window.document.location.host.replace(/:.*/, '');
-    const client = new Client(
+    const client = new Colyseus.Client(
       location.protocol.replace('http', 'ws') +
         '//' +
         host +
@@ -49,37 +54,32 @@ export class StrisciolineComponent implements AfterViewInit {
         this.room = roomInstance;
         console.log(this.room.sessionId, 'joined', this.room.name);
 
-        const players: object = {};
         this.room.state.players.onAdd = (player: any, sessionId: any) => {
-          player.onChange = (changes: DataChange[]) => {
-            changes.forEach((change: any) => {
-              console.log(change.field);
-              console.log(change.value);
-              console.log(change.previousValue);
+          this.answering.push(true);
+          console.log(this.answering);
+          player.onChange = (changes) => {
+            changes.forEach((change) => {
+              if (change.field === 'done') {
+                if (change.value === true) {
+                  this.answering.pop();
+                  if (!this.answering.length) {
+                    this.$answering.next(false);
+                  }
+                }
+              }
             });
           };
-          players[sessionId] = player;
-          Object.entries(players).forEach(([key, val]) => {
-            console.log(key, val.done);
-          });
         };
-
-        this.room.state.players.onChange = (player: any, sessionId: any) => {
-          console.log(`${player} have changes at ${sessionId}`);
-        };
-
-        this.room.onStateChange((state) => {
-          console.log(`${this.room.name} has new state: ${state}`);
-        });
 
         this.room.state.players.onRemove = (player: any, sessionId: any) => {
           console.log(`${player} has been removed at ${sessionId}`);
-          delete players[sessionId];
         };
 
         // server message handling
         this.room.onMessage('join', (message) => {
-          console.log(`${this.room.name} says: "${message}"`);
+          const joinMessage = `${this.room.name} says: "${message}"`;
+          console.log(joinMessage);
+          this.snackbar.open(message, undefined, { duration: 2000 });
         });
       })
       .catch((e) => {
@@ -91,13 +91,27 @@ export class StrisciolineComponent implements AfterViewInit {
     this.questionsFArr.push(this.fb.control('', Validators.required));
   }
 
+  private arr2DtoStr(arr: string[][]): string {
+    // https://softwareengineering.stackexchange.com/a/212813
+    return [].concat.apply([], arr).join();
+  }
+
   onSubmit(): void {
-    this.room.send('submit', { done: true });
     // combine two arrays like Python zip function (https://stackoverflow.com/a/22015771/1979665)
     const qa = this.questions.map((e, i) => [e, this.questionsFArr.value[i]]);
     console.log(qa);
+    this.room.send('submit', { qa: this.arr2DtoStr(qa), done: true });
+
+    this.$answering.subscribe({
+      next: (v) => {
+        this.showStory(qa);
+      }
+    });
+  }
+
+  private showStory(story: any): any {
     const dialogRef = this.dialog.open(StrisciolineResultComponent, {
-      data: qa,
+      data: story,
     });
     dialogRef.disableClose = true;
 
