@@ -9,14 +9,8 @@ export class StrisciolineRoom extends Room<State> {
     this.setState(new State());
 
     this.onMessage("submit", (client, data) => {
-      console.log(
-        "StrisciolineRoom received data from",
-        client.sessionId,
-        ":",
-        data
-      );
-      this.state.submitPlayer(client.sessionId, data);
-      client.send("Questions submitted. Waiting for other clients to finish.");
+      console.log("StrisciolineRoom received data from", client.sessionId);
+      this.state.submitStory(client.sessionId, data);
     });
 
     this.onMessage("*", (client, type, message) => {
@@ -30,7 +24,9 @@ export class StrisciolineRoom extends Room<State> {
   }
 
   onJoin(client: Client, options: any) {
-    client.send("join", `Hello ${client.sessionId}`);
+    const joinMessage = `${client.sessionId} joined the room!`;
+    console.log(joinMessage);
+    client.send("join", joinMessage);
     this.state.createPlayer(client.sessionId);
   }
 
