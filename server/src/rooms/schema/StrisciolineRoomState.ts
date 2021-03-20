@@ -1,6 +1,6 @@
 import { Schema, type, MapSchema } from "@colyseus/schema";
 
-class Player extends Schema {
+export class Player extends Schema {
   @type("string")
   qa = "";
 
@@ -19,9 +19,9 @@ export class State extends Schema {
     this.players.delete(sessionId);
   }
 
-  submitStory(sessionId: string, status: any) {
-    this.players.get(sessionId).qa = status.qa;
-    this.players.get(sessionId).done = status.done;
-    console.log(status);
+  submitStory(sessionId: string, data: { qa: string, done: boolean }) {
+    this.players.get(sessionId).qa = data.qa;
+    this.players.get(sessionId).done = data.done;
+    console.log(data);
   }
 }
