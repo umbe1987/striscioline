@@ -30,8 +30,11 @@ export class StrisciolineRoom extends Room<State> {
         console.log(...reorderedPlayers.keys());
         const finalStory = [...reorderedPlayers.values()].map((x) => x.qa);
         console.log(finalStory);
-        //this.mixStories(this.formatQA(finalStory));
-        client.send("final-story", this.formatQA(finalStory[0]));
+        const finalStory2DArr = this.mixStories(this.formatQA(finalStory));
+        this.broadcast('all-players-done');
+        this.onMessage('ready-to-read', (client) => {
+          client.send('final-story', finalStory2DArr.pop());
+        });
       }
     });
 
@@ -68,15 +71,19 @@ export class StrisciolineRoom extends Room<State> {
     return flattened.join(",");
   }
 
-  private formatQA(qaStr: string): string[][] {
+  private formatQA(qaStr: string[]): string[][] {
     // convert string to array by commas (https://stackoverflow.com/a/2858130/1979665)
     // convert flat array to pair QA (https://stackoverflow.com/a/44996257/1979665)
-    return qaStr.split(",").reduce((result, _, index, array) => {
-      if (index % 2 === 0) {
-        result.push(array.slice(index, index + 2));
-      }
-      return result;
-    }, []);
+    const qa2DArr = qaStr.map(qa => {
+      return qa.split(",").reduce((result, _, index, array) => {
+        if (index % 2 === 0) {
+          result.push(array.slice(index, index + 2));
+        }
+        return result;
+      }, []);
+    });
+
+    return qa2DArr;
   }
 
   private reorder(map: MapSchema<Player>, keys: string[]): Map<string, Player> {

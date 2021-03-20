@@ -63,6 +63,10 @@ export class StrisciolineComponent implements AfterViewInit {
           this.snackbar.open(message, undefined, { duration: 2000 });
         });
 
+        this.room.onMessage('all-players-done', (message) => {
+          this.room.send('ready-to-read');
+        });
+
         this.room.onMessage('final-story', (finalStory) => {
           this.showStory(finalStory);
         });
