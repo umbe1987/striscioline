@@ -31,10 +31,10 @@ export class StrisciolineRoom extends Room<State> {
         console.log(finalStory);
         const finalStory2DArr = finalStory.map((story) => this.formatQA(story));
         console.log(finalStory2DArr);
-        this.mixStories(finalStory2DArr);
+        const mixedStories = this.mixStories(finalStory2DArr);
         this.broadcast("all-players-done");
         this.onMessage("ready-to-read", (client) => {
-          client.send("final-story", finalStory2DArr.pop());
+          client.send("final-story", mixedStories.pop());
         });
       }
     });
