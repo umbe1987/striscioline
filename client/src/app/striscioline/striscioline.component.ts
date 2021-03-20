@@ -14,8 +14,6 @@ import { Subject } from 'rxjs';
   styleUrls: ['./striscioline.component.css'],
 })
 export class StrisciolineComponent implements AfterViewInit {
-  private answering: boolean[] = [];
-  private $answering = new Subject<boolean>();
   private room: Colyseus.Room;
   questions: string[] = [];
   strisciolineForm = this.fb.group({
@@ -54,23 +52,6 @@ export class StrisciolineComponent implements AfterViewInit {
         this.room = roomInstance;
         console.log(this.room.sessionId, 'joined', this.room.name);
 
-        this.room.state.players.onAdd = (player: any, sessionId: any) => {
-          this.answering.push(true);
-          console.log(this.answering);
-          player.onChange = (changes) => {
-            changes.forEach((change) => {
-              if (change.field === 'done') {
-                if (change.value === true) {
-                  this.answering.pop();
-                  if (!this.answering.length) {
-                    this.$answering.next(false);
-                  }
-                }
-              }
-            });
-          };
-        };
-
         this.room.state.players.onRemove = (player: any, sessionId: any) => {
           console.log(`${player} has been removed at ${sessionId}`);
         };
@@ -80,6 +61,10 @@ export class StrisciolineComponent implements AfterViewInit {
           const joinMessage = `${this.room.name} says: "${message}"`;
           console.log(joinMessage);
           this.snackbar.open(message, undefined, { duration: 2000 });
+        });
+
+        this.room.onMessage('final-story', (finalStory) => {
+          this.showStory(finalStory);
         });
       })
       .catch((e) => {
@@ -91,22 +76,11 @@ export class StrisciolineComponent implements AfterViewInit {
     this.questionsFArr.push(this.fb.control('', Validators.required));
   }
 
-  private arr2DtoStr(arr: string[][]): string {
-    // https://softwareengineering.stackexchange.com/a/212813
-    return [].concat.apply([], arr).join();
-  }
-
   onSubmit(): void {
     // combine two arrays like Python zip function (https://stackoverflow.com/a/22015771/1979665)
     const qa = this.questions.map((e, i) => [e, this.questionsFArr.value[i]]);
     console.log(qa);
-    this.room.send('submit', { qa: this.arr2DtoStr(qa), done: true });
-
-    this.$answering.subscribe({
-      next: (v) => {
-        this.showStory(qa);
-      }
-    });
+    this.room.send('submit', { qa, done: true });
   }
 
   private showStory(story: any): any {
