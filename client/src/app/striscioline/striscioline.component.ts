@@ -15,6 +15,8 @@ import { Subject } from 'rxjs';
 })
 export class StrisciolineComponent implements AfterViewInit {
   private room: Colyseus.Room;
+  private host = window.document.location.host.replace(/:.*/, '');
+  private client: Colyseus.Client;
   questions: string[] = [];
   strisciolineForm = this.fb.group({
     questionsFArr: this.fb.array([]),
@@ -39,14 +41,17 @@ export class StrisciolineComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    const host = window.document.location.host.replace(/:.*/, '');
-    const client = new Colyseus.Client(
+    this.initGame(this.host);
+  }
+
+  private initGame(host: string): void {
+    this.client = new Colyseus.Client(
       location.protocol.replace('http', 'ws') +
         '//' +
         host +
         (location.port ? ':' + location.port : '')
     );
-    client
+    this.client
       .joinOrCreate('striscioline')
       .then((roomInstance) => {
         this.room = roomInstance;
@@ -94,7 +99,9 @@ export class StrisciolineComponent implements AfterViewInit {
     dialogRef.disableClose = true;
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log(`Dialog result: ${result}`);
+      this.strisciolineForm.reset();
+      this.room.leave();
+      this.initGame(this.host);
     });
   }
 }
