@@ -21,18 +21,16 @@ export class StrisciolineRoom extends Room<State> {
       if (hasEveryoneFinished.every((x) => x)) {
         console.log("game finished!");
         const players = [...this.state.players.keys()];
-        console.log(players);
         this.broadcast("all-players-done");
         this.onMessage("ready-to-read", (client) => {
           const reorderedPlayers = this.reorder(
             this.state.players,
             this.rotate(players, players.indexOf(client.sessionId))
           );
-          console.log(...reorderedPlayers.keys());
           const finalStory = [...reorderedPlayers.values()].map((x) => x.qa);
-          console.log(finalStory);
-          const finalStory2DArr = finalStory.map((story) => this.formatQA(story));
-          console.log(finalStory2DArr);
+          const finalStory2DArr = finalStory.map((story) =>
+            this.formatQA(story)
+          );
           const mixedStories = this.mixStories(finalStory2DArr);
           client.send("final-story", mixedStories);
         });
@@ -99,7 +97,10 @@ export class StrisciolineRoom extends Room<State> {
     let step = 1;
     let idx: number = 0;
     [...Array(numQA).keys()].forEach((_, i) => {
-      console.log(idx);
+      if (numPlayers === 1) {
+        newStory.push(stories[0][i]);
+        return;
+      }
       if (idx >= numPlayers - 1) {
         step = -1;
       }
