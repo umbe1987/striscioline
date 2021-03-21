@@ -90,6 +90,7 @@ export class StrisciolineComponent implements AfterViewInit {
     const qa = this.questions.map((e, i) => [e, this.questionsFArr.value[i]]);
     console.log(qa);
     this.room.send('submit', { qa, done: true });
+    this.snackbar.open('Waiting other players to complete...');
   }
 
   private showStory(story: any): any {
