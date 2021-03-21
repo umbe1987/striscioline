@@ -34,7 +34,7 @@ export class StrisciolineRoom extends Room<State> {
         const mixedStories = this.mixStories(finalStory2DArr);
         this.broadcast("all-players-done");
         this.onMessage("ready-to-read", (client) => {
-          client.send("final-story", mixedStories.pop());
+          client.send("final-story", mixedStories);
         });
       }
     });
