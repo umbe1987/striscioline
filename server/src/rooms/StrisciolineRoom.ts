@@ -92,27 +92,23 @@ export class StrisciolineRoom extends Room<State> {
   }
 
   private mixStories(stories: string[][][]): string[][] {
-    let newStory: string[][] = [];
+    const newStory: string[][] = [];
     const numPlayers = stories.length;
     const numQA = stories[0].length;
     // https://stackoverflow.com/a/29715609/1979665
     let step = 1;
     let idx: number = 0;
-    if (numPlayers !== 1) {
-      [...Array(numQA).keys()].forEach((_, i) => {
-        console.log(idx);
-        if (idx >= numPlayers - 1) {
-          step = -1;
-        }
-        if (idx <= 0) {
-          step = +1;
-        }
-        newStory.push(stories[idx][i]);
-        idx += step;
-      });
-    } else {
-      newStory = stories[0];
-    }
+    [...Array(numQA).keys()].forEach((_, i) => {
+      console.log(idx);
+      if (idx >= numPlayers - 1) {
+        step = -1;
+      }
+      if (idx <= 0) {
+        step = +1;
+      }
+      newStory.push(stories[idx][i]);
+      idx += step;
+    });
 
     return newStory;
   }
