@@ -22,18 +22,18 @@ export class StrisciolineRoom extends Room<State> {
         console.log("game finished!");
         const players = [...this.state.players.keys()];
         console.log(players);
-        const reorderedPlayers = this.reorder(
-          this.state.players,
-          this.rotate(players, players.indexOf(client.sessionId))
-        );
-        console.log(...reorderedPlayers.keys());
-        const finalStory = [...reorderedPlayers.values()].map((x) => x.qa);
-        console.log(finalStory);
-        const finalStory2DArr = finalStory.map((story) => this.formatQA(story));
-        console.log(finalStory2DArr);
-        const mixedStories = this.mixStories(finalStory2DArr);
         this.broadcast("all-players-done");
         this.onMessage("ready-to-read", (client) => {
+          const reorderedPlayers = this.reorder(
+            this.state.players,
+            this.rotate(players, players.indexOf(client.sessionId))
+          );
+          console.log(...reorderedPlayers.keys());
+          const finalStory = [...reorderedPlayers.values()].map((x) => x.qa);
+          console.log(finalStory);
+          const finalStory2DArr = finalStory.map((story) => this.formatQA(story));
+          console.log(finalStory2DArr);
+          const mixedStories = this.mixStories(finalStory2DArr);
           client.send("final-story", mixedStories);
         });
       }
